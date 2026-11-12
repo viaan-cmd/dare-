@@ -4,134 +4,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Truth or Dare</title>
+    <title>Neon Truth or Dare Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
+            background-color: #05070a;
             color: white;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        h1, h2, .neon-text {
+        h1, h2, .neon-font {
             font-family: 'Righteous', cursive;
         }
 
-        /* Neon Glow Effects */
+        /* Ambient Background */
+        .bg-glow {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(20, 10, 40, 1) 0%, rgba(5, 7, 10, 1) 80%);
+            z-index: -1;
+        }
+
+        /* Neon Text & Elements */
         .neon-title {
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 80px #ff00de;
+            text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 40px #ff00de;
         }
         
-        .neon-btn-truth {
-            box-shadow: 0 0 10px #00f3ff, inset 0 0 10px #00f3ff;
-            border-color: #00f3ff;
-            text-shadow: 0 0 5px #00f3ff;
-            transition: all 0.3s ease;
-        }
-        .neon-btn-truth:hover {
-            box-shadow: 0 0 20px #00f3ff, inset 0 0 20px #00f3ff;
-            background-color: rgba(0, 243, 255, 0.2);
+        .neon-player {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff;
         }
 
-        .neon-btn-dare {
-            box-shadow: 0 0 10px #ff0055, inset 0 0 10px #ff0055;
-            border-color: #ff0055;
-            text-shadow: 0 0 5px #ff0055;
-            transition: all 0.3s ease;
-        }
-        .neon-btn-dare:hover {
-            box-shadow: 0 0 20px #ff0055, inset 0 0 20px #ff0055;
-            background-color: rgba(255, 0, 85, 0.2);
+        .btn-base {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .neon-btn-next {
-            box-shadow: 0 0 10px #b500ff, inset 0 0 10px #b500ff;
-            border-color: #b500ff;
-            text-shadow: 0 0 5px #b500ff;
-            transition: all 0.3s ease;
+        .btn-truth {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.4);
+            border: 2px solid #00f3ff;
+            color: #00f3ff;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.8);
         }
-        .neon-btn-next:hover {
-            box-shadow: 0 0 20px #b500ff, inset 0 0 20px #b500ff;
-            background-color: rgba(181, 0, 255, 0.2);
+        .btn-truth:hover, .btn-truth:active {
+            box-shadow: 0 0 30px #00f3ff, inset 0 0 20px #00f3ff;
+            background-color: rgba(0, 243, 255, 0.15);
+            transform: scale(1.05);
         }
 
-        .card-glow {
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+        .btn-dare {
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.4);
+            border: 2px solid #ff0055;
+            color: #ff0055;
+            text-shadow: 0 0 8px rgba(255, 0, 85, 0.8);
+        }
+        .btn-dare:hover, .btn-dare:active {
+            box-shadow: 0 0 30px #ff0055, inset 0 0 20px #ff0055;
+            background-color: rgba(255, 0, 85, 0.15);
+            transform: scale(1.05);
+        }
+
+        .btn-next {
+            box-shadow: 0 0 15px rgba(181, 0, 255, 0.4), inset 0 0 10px rgba(181, 0, 255, 0.4);
+            border: 2px solid #b500ff;
+            color: #e5a8ff;
+            text-shadow: 0 0 8px rgba(181, 0, 255, 0.8);
+        }
+        .btn-next:hover, .btn-next:active {
+            box-shadow: 0 0 30px #b500ff, inset 0 0 20px #b500ff;
+            background-color: rgba(181, 0, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
         /* Animations */
-        .fade-in {
-            animation: fadeIn 0.5s forwards;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .pop-in {
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+        .slide-up {
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Particles Background */
-        .bg-particles {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0b0f19 100%);
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .pulse-text {
+            animation: pulseGlow 2s infinite;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
-    
-    <div class="bg-particles"></div>
+<body class="flex flex-col items-center justify-center p-4">
+    <div class="bg-glow"></div>
 
-    <div class="w-full max-w-lg mx-auto flex flex-col items-center">
-        <!-- Title -->
-        <h1 class="text-5xl sm:text-6xl text-white neon-title mb-10 text-center tracking-wider pop-in">TRUTH OR DARE</h1>
+    <div class="w-full max-w-2xl mx-auto flex flex-col items-center z-10 slide-up">
+        
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-5xl sm:text-7xl text-white neon-title tracking-wider mb-2">TRUTH OR DARE</h1>
+            <p class="text-gray-400 font-semibold tracking-[0.3em] uppercase text-xs">LAN Party Edition</p>
+        </div>
 
-        <!-- Main Game Area -->
-        <div id="gameArea" class="w-full bg-white/5 border border-white/10 rounded-3xl p-8 flex flex-col items-center text-center card-glow pop-in" style="animation-delay: 0.2s;">
+        <!-- Main Card -->
+        <div class="w-full glass-panel rounded-3xl p-8 sm:p-12 flex flex-col items-center text-center min-h-[400px] justify-center relative">
             
-            <!-- Turn Indicator -->
-            <div id="turnIndicator" class="mb-8">
-                <p class="text-gray-400 text-sm uppercase tracking-[0.2em] font-semibold mb-2">Current Player</p>
-                <h2 id="playerName" class="text-4xl text-white neon-text uppercase tracking-wide">Ready?</h2>
-            </div>
-
-            <!-- Action Selection -->
-            <div id="actionSelection" class="flex flex-col sm:flex-row gap-6 w-full justify-center mt-4">
-                <button onclick="choose('truth')" class="flex-1 border-2 bg-transparent text-[#00f3ff] rounded-xl py-4 px-6 text-2xl font-bold uppercase tracking-widest neon-btn-truth">
-                    Truth
-                </button>
-                <button onclick="choose('dare')" class="flex-1 border-2 bg-transparent text-[#ff0055] rounded-xl py-4 px-6 text-2xl font-bold uppercase tracking-widest neon-btn-dare">
-                    Dare
-                </button>
-            </div>
-
-            <!-- Prompt Display -->
-            <div id="promptDisplay" class="hidden flex-col items-center w-full mt-4">
-                <span id="promptType" class="text-sm uppercase tracking-[0.2em] font-bold mb-4"></span>
-                <p id="promptText" class="text-2xl sm:text-3xl font-medium leading-tight text-white mb-10 min-h-[100px] flex items-center justify-center"></p>
+            <!-- Turn Status -->
+            <div id="statusArea" class="w-full transition-opacity duration-300">
+                <p class="text-gray-400 text-sm uppercase tracking-[0.2em] font-bold mb-3">Up Next</p>
+                <h2 id="playerName" class="text-5xl sm:text-6xl text-white neon-font uppercase tracking-wide neon-player mb-10">Loading...</h2>
                 
-                <button onclick="nextTurn()" class="border-2 bg-transparent text-[#b500ff] rounded-xl py-3 px-8 text-xl font-bold uppercase tracking-wider neon-btn-next w-full sm:w-auto">
-                    Next Turn
+                <div class="flex flex-col sm:flex-row gap-6 w-full justify-center">
+                    <button onclick="pickAction('truth')" class="flex-1 btn-base btn-truth rounded-2xl py-5 px-6 text-3xl neon-font uppercase tracking-widest">
+                        Truth
+                    </button>
+                    <button onclick="pickAction('dare')" class="flex-1 btn-base btn-dare rounded-2xl py-5 px-6 text-3xl neon-font uppercase tracking-widest">
+                        Dare
+                    </button>
+                </div>
+            </div>
+
+            <!-- Prompt Display (Hidden by default) -->
+            <div id="promptArea" class="hidden w-full flex-col items-center transition-opacity duration-300 opacity-0">
+                <span id="promptTypeLabel" class="text-xl uppercase tracking-[0.3em] font-bold mb-6 neon-font"></span>
+                <p id="promptText" class="text-2xl sm:text-3xl font-medium leading-relaxed text-white mb-12 min-h-[120px] flex items-center justify-center italic">
+                    "Loading prompt..."
+                </p>
+                
+                <button onclick="advanceTurn()" class="btn-base btn-next rounded-xl py-4 px-10 text-xl font-bold uppercase tracking-widest w-full sm:w-auto">
+                    Done. Next Player
                 </button>
             </div>
             
         </div>
+        
+        <!-- Stats -->
+        <p id="statsText" class="text-gray-500 text-xs mt-6 tracking-widest uppercase">Prompts Used: 0</p>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- Hidden Reset Button -->
+    <button onclick="resetMemory()" class="fixed bottom-4 right-4 text-[10px] text-gray-700 hover:text-red-500 uppercase tracking-widest opacity-50 hover:opacity-100 transition-colors">
+        Reset Memory
+    </button>
+
     <script>
-        // Define Players
+        // Specific Players
         const players = [
             { name: "Viaan", gender: "m" },
             { name: "Mohammad", gender: "m" },
@@ -139,185 +167,313 @@
             { name: "Nikki", gender: "f" }
         ];
 
-        let currentPlayerIndex = -1; // -1 means game hasn't started
+        let currentPlayerIndex = 0;
+        const STORAGE_KEY = 'tod_used_prompts_v1';
+
+        // --- MASSIVE UNIQUE HARDCODED ARRAYS ---
+        // (No Combinatorial Generators)
         
-        // Generator Arrays for Truths (10x10x10 = 1000 unique combinations)
-        const truthP1 = [
-            "What is your honest opinion on",
-            "Tell us your most embarrassing story about",
-            "When was the last time you cried over",
-            "Have you ever lied to someone about",
-            "What is your weirdest habit involving",
-            "Share a secret you have regarding",
-            "What is the worst advice you've given about",
-            "Have you ever had a weird dream about",
-            "What is your biggest fear related to",
-            "Who in this room is the worst at"
-        ];
-        
-        const truthP2 = [
-            "romantic relationships",
-            "using social media",
-            "eating strange food combinations",
-            "singing in the shower",
-            "talking to yourself",
-            "binge-watching TV shows",
-            "getting lost in public",
-            "texting the wrong person",
-            "failing a simple task",
-            "pretending to be busy"
-        ];
-        
-        const truthP3 = [
-            "and how do you feel about it now?",
-            "when no one else is around?",
-            "in front of your family?",
-            "just to impress a crush?",
-            "and would you ever do it again?",
-            "without anyone finding out?",
-            "in the last 24 hours?",
-            "and why is it a secret?",
-            "while you were supposed to be working/studying?",
-            "and who was involved?"
+        const allTruths = [
+            "What is the most embarrassing thing you've searched on Google this week?",
+            "What is the most awkward text you've ever accidentally sent to the wrong person?",
+            "If we went through your search history right now, what would be the most difficult thing to explain?",
+            "Who is your absolute weirdest celebrity crush?",
+            "What is a lie you told your parents that they still believe to this day?",
+            "Have you ever practiced kissing in front of a mirror?",
+            "What is the most embarrassing nickname you've ever been given?",
+            "What is the most petty thing you've ever done in an argument?",
+            "If you had to delete one person from this room from your life, who would it be and why?",
+            "What is a secret you are keeping from someone in this room?",
+            "Have you ever stalked an ex or a crush heavily on social media?",
+            "What is the dumbest thing you have ever cried over?",
+            "When was the last time you peed in a pool?",
+            "What is the most disgusting food habit you have in secret?",
+            "Have you ever stolen something? What was it?",
+            "Who in this room do you think would survive the shortest in a zombie apocalypse?",
+            "What is the most embarrassing thing in your room right now?",
+            "What is the worst gift you have ever given someone?",
+            "Have you ever blamed a fart on someone else in public?",
+            "What is the longest you've gone without showering?",
+            "Who is the most annoying person you regularly talk to?",
+            "What is a rumor you've spread that wasn't true?",
+            "What is the most embarrassing music phase you went through?",
+            "Have you ever dropped food on the floor and still eaten it?",
+            "What is your absolute worst habit?",
+            "If you could trade lives with one person in this room for a day, who would it be?",
+            "What is the most awkward date you've ever been on (or conversation with a crush)?",
+            "What is a movie you secretly love but pretend to hate?",
+            "Who in this room do you think is the worst dresser?",
+            "What is the weirdest dream you've ever had about someone in this room?",
+            "Have you ever lied about your age to get out of trouble?",
+            "What is the most embarrassing photo on your phone right now?",
+            "Have you ever picked your nose and eaten it as a child?",
+            "What is the absolute worst grade you've ever gotten and hidden from your parents?",
+            "What is a rule you constantly break when no one is looking?",
+            "Have you ever snooped through someone else's phone?",
+            "What is the most jealous you have ever been?",
+            "Who do you secretly think is the smartest person in this room?",
+            "Who do you secretly think is the dumbest person in this room?",
+            "What is the most cringeworthy thing you've ever said to someone you liked?",
+            "Have you ever faked an illness to get out of an event?",
+            "What is the weirdest thing you do when you are completely alone?",
+            "Have you ever regifted a present? To who?",
+            "What is the most embarrassing thing your parents have caught you doing?",
+            "If you had to marry one person in this room, who would it be?",
+            "What is the most trouble you've ever been in at school?",
+            "Have you ever used someone else's toothbrush?",
+            "What is your biggest insecurity?",
+            "What is the most expensive thing you've broken and hidden?",
+            "Have you ever ghosted someone for a terrible reason? Why?",
+            "What is the weirdest YouTube rabbit hole you've gone down?",
+            "What is the longest you've worn the same pair of underwear?",
+            "Who in this room has the most annoying laugh?",
+            "What is the worst meal you've ever cooked?",
+            "Have you ever eavesdropped on a serious conversation? What did you hear?",
+            "What is the most embarrassing app on your phone right now?",
+            "Have you ever laughed at a completely inappropriate moment?",
+            "What is the weirdest thing you find attractive?",
+            "Who is the last person you creeped on Instagram?",
+            "What is the biggest waste of money you've ever spent?",
+            "Have you ever lied to get someone else in trouble?",
+            "What is the most immature thing you still do?",
+            "What is a bizarre phobia you have?",
+            "Have you ever pretended to know a language you don't?",
+            "What is the worst lie you've ever told to get a job or position?",
+            "If you had to be handcuffed to someone in this room for a week, who would it be?",
+            "What is the most embarrassing thing you've done for attention?",
+            "Have you ever created a fake social media account to spy on someone?",
+            "What is the weirdest text you have saved in your phone?",
+            "What is the most embarrassing thing you believed as a kid?",
+            "Who in this room would you least want to be stuck in an elevator with?",
+            "What is the grossest thing you've ever put in your mouth?",
+            "Have you ever peed in the shower?",
+            "What is a talent you have that is completely useless?",
+            "What is the most dramatic thing you've ever done?",
+            "Have you ever ruined someone's birthday or special event?",
+            "What is the most awkward encounter you've had in a public restroom?",
+            "What is the biggest secret you kept from your best friend?",
+            "Have you ever intentionally ignored someone's texts for days?",
+            "What is the most strange thing you've bought online late at night?"
         ];
 
-        // Generator Arrays for Dares (10x10x10 = 1000 unique combinations)
-        const dareP1 = [
-            "Act out the life of",
-            "Give a passionate 30-second speech about",
-            "Mime the struggle of",
-            "Sing a made-up song about",
-            "Do an interpretive dance representing",
-            "Whisper a dramatic monologue about",
-            "Draw (in the air with your finger) the shape of",
-            "Pretend you are explaining",
-            "Make facial expressions showing the emotion of",
-            "Tell a bedtime story about"
-        ];
-        
-        const dareP2 = [
-            "a confused time traveler",
-            "a squirrel losing its nut",
-            "an alien trying human food",
-            "a robot that is running out of battery",
-            "a dramatic reality TV star",
-            "a melting snowman",
-            "someone walking on ice in high heels",
-            "a superhero with a useless power",
-            "a cat trying to catch a laser pointer",
-            "a frantic chef in a busy kitchen"
-        ];
-        
-        const dareP3 = [
-            "while balancing on one foot.",
-            "without blinking or breaking eye contact.",
-            "using a terrible fake accent.",
-            "while pretending the floor is lava.",
-            "in slow motion.",
-            "while completely ignoring the person to your left.",
-            "with your eyes tightly closed.",
-            "and end it by bowing like royalty.",
-            "while laughing like an evil villain between words.",
-            "using only your non-dominant hand for gestures."
+        const allDares = [
+            "Let the person to your left scroll through your camera roll for 30 seconds.",
+            "Show the group your exact screen time for today.",
+            "Let the person to your right send a text to anyone in your contacts.",
+            "Post a completely bizarre status update on a social media platform right now.",
+            "Do your best impression of the person sitting across from you.",
+            "Let someone in the group draw on your face with a pen or marker.",
+            "Eat a spoonful of a random condiment chosen by the group (ketchup, mustard, etc).",
+            "Speak in a heavy British accent for your next three turns.",
+            "Read your last 5 text messages sent out loud to the room.",
+            "Sing everything you want to say instead of speaking until your next turn.",
+            "Show the group the last photo you took on your phone, no matter what it is.",
+            "Let the person to your left go through your YouTube search history.",
+            "Call a random contact and sing 'Happy Birthday' to them, then hang up.",
+            "Do 20 jumping jacks right now while shouting the alphabet backwards.",
+            "Hold an ice cube in your hand until it completely melts.",
+            "Let the group style your hair however they want for the rest of the game.",
+            "Try to juggle 3 small objects chosen by the group.",
+            "Smell the inside of the shoe of the person to your right.",
+            "Act like a monkey for 1 full minute.",
+            "Text your parents 'I have something crazy to tell you' and don't reply for 10 minutes.",
+            "Let someone blindfold you and feed you a mysterious item from the fridge.",
+            "Talk without moving your lips for the next two rounds.",
+            "Do a dramatic reading of a random article or Wikipedia page chosen by the group.",
+            "Attempt to do a headstand against the wall.",
+            "Let the person to your right tweet/post anything they want on your account.",
+            "Hold a plank for 1 minute while the group roasts you.",
+            "Sniff the armpit of the person sitting to your left.",
+            "Call a local pizza place and ask if they sell tacos.",
+            "Show the group your last 5 Google searches.",
+            "Wear your clothes inside out for the rest of the game.",
+            "Eat a slice of lemon without making a face.",
+            "Let the group write a word on your forehead.",
+            "Pretend to be a cat and rub against everyone in the room.",
+            "Try to lick your own elbow for 30 seconds.",
+            "Send a completely random GIF to the 10th person in your recent messages.",
+            "Make the ugliest face you possibly can and let someone take a picture.",
+            "Give a foot massage to the person of your choice.",
+            "Dance with no music for 1 straight minute.",
+            "Let the group look at your liked videos on TikTok/Instagram Reels.",
+            "Put a piece of ice down your shirt and keep it there until it melts.",
+            "Spin around 10 times and then try to walk in a straight line.",
+            "Talk in the third person for the rest of the game.",
+            "Let the person across from you flick you on the forehead.",
+            "Give a passionate 30-second speech about why you love a random object in the room.",
+            "Bark like a dog whenever someone says your name until your next turn.",
+            "Try to drink a glass of water without using your hands.",
+            "Let the group pick a contact on your phone to call, and you must hold a 1-minute conversation.",
+            "Put your socks on your hands for the next three rounds.",
+            "Tell a terrible joke and you can't stop until someone actually laughs.",
+            "Let someone in the group give you a wet willy.",
+            "Act like a robot trying to understand human emotions.",
+            "Let the group pick a random song and you must passionately lip-sync to it.",
+            "Send a message to your crush (or a random friend) saying 'I know your secret'.",
+            "Try to touch your nose with your tongue.",
+            "Pretend you are an influencer doing a bizarre unboxing video.",
+            "Let the person to your right tickle you for 15 seconds.",
+            "Show the group the most embarrassing TikTok or video you have saved.",
+            "Act like you are underwater for the next 2 minutes.",
+            "Let the group choose an emoji that you have to send to 3 random contacts.",
+            "Pretend to be a news anchor reporting on a tragedy in the room.",
+            "Sit on the floor in the corner like you are in time-out until your next turn.",
+            "Let the person to your left slap you lightly on the cheek.",
+            "Pretend to cry intensely for 30 seconds.",
+            "Show everyone the last song you listened to.",
+            "Try to balance a spoon on your nose for 10 seconds.",
+            "Let the group pick your outfit using only items currently in the room.",
+            "Act like a statue for 1 minute.",
+            "Let someone in the group read a random DM from your Instagram/Twitter.",
+            "Pretend you are a flight attendant giving instructions, but make them weird.",
+            "Make a weird animal noise every time you breathe in for the next round.",
+            "Try to do a magic trick using objects in the room.",
+            "Let the group ask you 3 rapid-fire 'Yes or No' questions that you must answer honestly.",
+            "Pretend you are possessed by a ghost for 30 seconds.",
+            "Let the person to your left give you a new weird nickname that everyone must use.",
+            "Show the group the most recent screenshot in your camera roll.",
+            "Act out a movie scene using only gibberish words.",
+            "Try to spell your name backwards loudly in 3 seconds.",
+            "Let the group pick a random contact and you have to text them a single period '.'",
+            "Pretend to be stuck in an invisible box.",
+            "Hold a mouthful of water while the group tries to make you laugh."
         ];
 
-        // Track used prompts to guarantee NO REPEATS
-        const usedPrompts = new Set();
-        let specialKissTriggered = false;
+        // --- GAME LOGIC ---
 
-        // UI Elements
+        const statusArea = document.getElementById('statusArea');
+        const promptArea = document.getElementById('promptArea');
         const playerNameEl = document.getElementById('playerName');
-        const actionSelectionEl = document.getElementById('actionSelection');
-        const promptDisplayEl = document.getElementById('promptDisplay');
-        const promptTypeEl = document.getElementById('promptType');
-        const promptTextEl = document.getElementById('promptText');
+        const promptTypeLabel = document.getElementById('promptTypeLabel');
+        const promptText = document.getElementById('promptText');
+        const statsText = document.getElementById('statsText');
 
-        // Start Game loop automatically on load
-        window.onload = () => {
-            nextTurn();
-        };
-
-        function nextTurn() {
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-            const currentPlayer = players[currentPlayerIndex];
-
-            // Update UI
-            playerNameEl.innerText = currentPlayer.name;
-            playerNameEl.classList.remove('pop-in');
-            void playerNameEl.offsetWidth; // Trigger reflow to restart animation
-            playerNameEl.classList.add('pop-in');
-
-            // Show Truth/Dare buttons, hide Prompt
-            actionSelectionEl.classList.remove('hidden');
-            actionSelectionEl.classList.add('flex');
-            
-            promptDisplayEl.classList.add('hidden');
-            promptDisplayEl.classList.remove('flex');
+        // Initialize local storage tracker
+        function getUsedPrompts() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         }
-        
-        function generatePrompt(type) {
-            // 20% chance to trigger the specific gender-based kiss requirement until it is used once
-            if (type === 'truth' && !specialKissTriggered && Math.random() < 0.2) {
-                specialKissTriggered = true;
-                return "Who would you kiss, [KISS_CHOICE]?";
+
+        function saveUsedPrompt(prompt) {
+            let used = getUsedPrompts();
+            used.push(prompt);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(used));
+            updateStats();
+        }
+
+        function updateStats() {
+            statsText.innerText = `Prompts Used: ${getUsedPrompts().length}`;
+        }
+
+        function resetMemory() {
+            if(confirm("Are you sure you want to clear the prompt memory? This allows repeats again.")) {
+                localStorage.removeItem(STORAGE_KEY);
+                updateStats();
             }
-
-            // Generate combinatorial prompt based on type
-            let p1 = type === 'truth' ? truthP1 : dareP1;
-            let p2 = type === 'truth' ? truthP2 : dareP2;
-            let p3 = type === 'truth' ? truthP3 : dareP3;
-            
-            let part1 = p1[Math.floor(Math.random() * p1.length)];
-            let part2 = p2[Math.floor(Math.random() * p2.length)];
-            let part3 = p3[Math.floor(Math.random() * p3.length)];
-            
-            return `${part1} ${part2} ${part3}`;
         }
 
-        function choose(type) {
-            const currentPlayer = players[currentPlayerIndex];
+        function initGame() {
+            updateStats();
+            setPlayerUI();
+        }
+
+        function setPlayerUI() {
+            const player = players[currentPlayerIndex];
+            playerNameEl.innerText = player.name;
+            playerNameEl.classList.remove('pulse-text');
+            void playerNameEl.offsetWidth; // trigger reflow
+            playerNameEl.classList.add('pulse-text');
+
+            // Reset view
+            promptArea.classList.add('hidden');
+            promptArea.classList.remove('flex');
+            promptArea.style.opacity = '0';
             
+            setTimeout(() => {
+                statusArea.style.opacity = '1';
+                statusArea.style.pointerEvents = 'auto';
+            }, 50);
+        }
+
+        function advanceTurn() {
+            // Fade out prompt
+            promptArea.style.opacity = '0';
+            setTimeout(() => {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                setPlayerUI();
+            }, 300);
+        }
+
+        function pickAction(type) {
+            const player = players[currentPlayerIndex];
+            const usedPrompts = getUsedPrompts();
             let selectedPrompt = "";
-            let attempts = 0;
-            const maxAttempts = 200; // Safeguard against infinite loops
 
-            // Generate unique prompt, keep retrying if it's already in the usedPrompts Set
-            do {
-                selectedPrompt = generatePrompt(type);
-                attempts++;
-            } while (usedPrompts.has(selectedPrompt) && attempts < maxAttempts);
-
-            // Add to Set to prevent repeats for the remainder of the session
-            usedPrompts.add(selectedPrompt);
-
-            // Process dynamic placeholders (Gender specific constraint)
-            if (selectedPrompt.includes('[KISS_CHOICE]')) {
-                if (currentPlayer.gender === 'm') {
-                    selectedPrompt = selectedPrompt.replace('[KISS_CHOICE]', 'Sarrah or Nikki');
-                } else {
-                    selectedPrompt = selectedPrompt.replace('[KISS_CHOICE]', 'Viaan or Mohammad');
+            // 1. Check for the specific Gender-Based "Kiss" Truth (High Chance)
+            if (type === 'truth') {
+                const isGirl = player.gender === 'f';
+                const kissPromptBoy = "Who would you kiss, Sarrah or Nikki?";
+                const kissPromptGirl = "Who would you kiss, Viaan or Mohammad?";
+                
+                const targetKissPrompt = isGirl ? kissPromptGirl : kissPromptBoy;
+                
+                // If they haven't gotten their kiss prompt yet, 30% chance to force it
+                if (!usedPrompts.includes(targetKissPrompt) && Math.random() < 0.3) {
+                    selectedPrompt = targetKissPrompt;
                 }
             }
 
-            // Hide Action Buttons
-            actionSelectionEl.classList.add('hidden');
-            actionSelectionEl.classList.remove('flex');
+            // 2. Standard Random Selection (if specific prompt didn't trigger)
+            if (!selectedPrompt) {
+                const sourceArray = type === 'truth' ? allTruths : allDares;
+                
+                // Filter out used prompts
+                const availablePrompts = sourceArray.filter(p => !usedPrompts.includes(p));
 
-            // Show Prompt Display
-            promptDisplayEl.classList.remove('hidden');
-            promptDisplayEl.classList.add('flex', 'fade-in');
-
-            // Set Prompt Text and Type
-            if (type === 'truth') {
-                promptTypeEl.innerText = "Truth";
-                promptTypeEl.className = "text-sm uppercase tracking-[0.2em] font-bold mb-4 text-[#00f3ff]";
-            } else {
-                promptTypeEl.innerText = "Dare";
-                promptTypeEl.className = "text-sm uppercase tracking-[0.2em] font-bold mb-4 text-[#ff0055]";
+                if (availablePrompts.length === 0) {
+                    selectedPrompt = `Wow, you've exhausted all the ${type}s! Reset memory to play again.`;
+                } else {
+                    // Pick random from remaining
+                    const randomIndex = Math.floor(Math.random() * availablePrompts.length);
+                    selectedPrompt = availablePrompts[randomIndex];
+                }
             }
-            
-            promptTextEl.innerText = `"${selectedPrompt}"`;
+
+            // 3. Save to local storage (if it's not the exhaustion message)
+            if (!selectedPrompt.includes("exhausted all")) {
+                saveUsedPrompt(selectedPrompt);
+            }
+
+            // 4. Update UI Transition
+            statusArea.style.opacity = '0';
+            statusArea.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                // Setup Prompt details
+                if (type === 'truth') {
+                    promptTypeLabel.innerText = "Truth";
+                    promptTypeLabel.style.color = "#00f3ff";
+                    promptTypeLabel.style.textShadow = "0 0 10px #00f3ff";
+                } else {
+                    promptTypeLabel.innerText = "Dare";
+                    promptTypeLabel.style.color = "#ff0055";
+                    promptTypeLabel.style.textShadow = "0 0 10px #ff0055";
+                }
+
+                promptText.innerText = `"${selectedPrompt}"`;
+
+                promptArea.classList.remove('hidden');
+                promptArea.classList.add('flex');
+                
+                // Fade in
+                setTimeout(() => {
+                    promptArea.style.opacity = '1';
+                }, 50);
+
+            }, 300);
         }
+
+        // Start
+        window.onload = initGame;
     </script>
 </body>
 </html>
