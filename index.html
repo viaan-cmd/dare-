@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer LAN Truth or Dare</title>
-    <!-- PeerJS CDN for direct device-to-device connection over local network / internet -->
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <title>Truth, Dare & Choices</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -27,6 +25,7 @@
             align-items: center;
             min-height: 100vh;
             justify-content: center;
+            box-sizing: border-box;
         }
 
         .container {
@@ -64,23 +63,11 @@
             display: none !important;
         }
 
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #475569;
-            background-color: #0f172a;
-            color: white;
-            font-size: 1rem;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
         .btn {
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 1rem;
             font-weight: 600;
             border-radius: 8px;
@@ -109,7 +96,7 @@
             background-color: #0f172a;
             border-radius: 12px;
             padding: 20px;
-            min-height: 110px;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -118,45 +105,178 @@
         }
 
         .current-player {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: #38bdf8;
             margin-bottom: 6px;
         }
 
         .prompt-text {
-            font-size: 1rem;
+            font-size: 1.05rem;
             line-height: 1.4;
             color: #f1f5f9;
         }
 
-        .status-box {
-            background: #0f172a;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: #38bdf8;
-            border: 1px dashed #334155;
+        .player-chips {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .chip {
+            background: #334155;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>LAN Truth or Dare</h1>
-    <div class="subtitle">Multi-Device Synchronized Edition</div>
+    <h1>Truth, Dare & Choices</h1>
+    <div class="subtitle">Sitting / Couch Edition</div>
 
-    <!-- LOBBY SCREEN -->
-    <div id="lobbyScreen" class="screen">
-        <p style="color: var(--text-muted); margin:0;">Select your player profile to join:</p>
-        <select id="playerNameSelect">
-            <option value="Viaan">Viaan (Male)</option>
-            <option value="Mohammad">Mohammad (Male)</option>
-            <option value="Sarrah">Sarrah (Female)</option>
-            <option value="Nikki">Nikki (Female)</option>
-        </select>
+    <!-- SETUP SCREEN -->
+    <div id="setupScreen" class="screen">
+        <p style="color: var(--text-muted); margin:0;">Players locked in:</p>
+        <div class="player-chips">
+            <span class="chip">Viaan</span>
+            <span class="chip">Sarrah</span>
+            <span class="chip">Mohammad</span>
+            <span class="chip">Nikki</span>
+        </div>
+        <button id="startBtn" class="btn">Start Game</button>
+    </div>
 
-        <button class="btn" onclick="hostGame()">Create Room (Host)</button>
-        <div style="font-size: 0.85rem; color: var(--text-muted);">— OR JOIN EXISTING ROOM —</div>
-        <input type="text" id="roomCodeInput" placeholder="Enter Host Room Code">
-        <button class="btn" style="
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen hidden">
+        <div id="turnIndicator" class="current-player">It's Viaan's turn!</div>
+        
+        <div class="card">
+            <div id="promptContent" class="prompt-text">Choose Truth, Dare, or Choose Between below!</div>
+        </div>
+
+        <div id="choiceButtons" class="btn-group">
+            <button id="truthBtn" class="btn btn-truth">Truth</button>
+            <button id="dareBtn" class="btn btn-dare">Dare</button>
+            <button id="choiceBtn" class="btn btn-choice">Choice</button>
+        </div>
+
+        <button id="nextBtn" class="btn hidden" style="background-color: #334155;">Next Player</button>
+    </div>
+</div>
+
+<script>
+    const players = [
+        { name: "Viaan", gender: "male" },
+        { name: "Mohammad", gender: "male" },
+        { name: "Sarrah", gender: "female" },
+        { name: "Nikki", gender: "female" }
+    ];
+
+    let currentPlayerIndex = 0;
+
+    const truths = {
+        male: [
+            "Who in this room would you trust the most to hide your phone if it had embarrassing things on it?",
+            "What is the funniest text you've accidentally sent to the wrong person while sitting at home?",
+            "If you had to swap styles with someone in this room for a week, who would it be?",
+            "What is a silly secret talent you can perform right now while sitting down?"
+        ],
+        female: [
+            "Who in this room do you think takes the longest to get ready when going out?",
+            "What is the weirdest snack combination you actually enjoy eating while gaming or chilling?",
+            "If you could instantly teleport anywhere in the world right now without leaving your seat, where would you go?",
+            "What's a minor habit you have that you think nobody else notices?"
+        ]
+    };
+
+    const dares = {
+        male: [
+            "Send a random emoji to the last person you messaged on your phone without explaining why.",
+            "Do your best dramatic movie villain monologue for 15 seconds while remaining completely seated.",
+            "Let the person to your right look through your photo gallery for 30 seconds.",
+            "Speak like a robot for the next 2 full rounds while answering questions."
+        ],
+        female: [
+            "Speak in a dramatic British accent for the next 2 full rounds.",
+            "Act out your reaction if your phone suddenly flew across the room right now.",
+            "Send a voice note to a random friend saying 'The penguins are migrating early this year' and play it out loud.",
+            "Let the person to your left change your phone wallpaper to something funny for 10 minutes."
+        ]
+    };
+
+    const choices = {
+        male: [
+            "**Would You Rather:** Between Sarrah and Nikki, who would you rather kiss? (Pick one boldly!)",
+            "**Would You Rather:** Between Sarrah and Nikki, who would you trust to survive a zombie apocalypse locked in a room together?",
+            "**Would You Rather:** Between Sarrah and Nikki, who has the better taste in music or games?"
+        ],
+        female: [
+            "**Would You Rather:** Between Viaan and Mohammad, who would you rather kiss? (No backing out, pick one!)",
+            "**Would You Rather:** Between Viaan and Mohammad, who do you think would panic first if the Wi-Fi cut out?",
+            "**Would You Rather:** Between Viaan and Mohammad, who would you pick as your co-driver on a cross-country road trip?"
+        ]
+    };
+
+    // DOM Elements
+    const setupScreen = document.getElementById('setupScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const startBtn = document.getElementById('startBtn');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const promptContent = document.getElementById('promptContent');
+    const choiceButtons = document.getElementById('choiceButtons');
+    const truthBtn = document.getElementById('truthBtn');
+    const dareBtn = document.getElementById('dareBtn');
+    const choiceBtn = document.getElementById('choiceBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Event Listeners (Guaranteed to bind properly)
+    startBtn.addEventListener('click', () => {
+        setupScreen.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
+        updateTurnDisplay();
+    });
+
+    truthBtn.addEventListener('click', () => getPrompt('truth'));
+    dareBtn.addEventListener('click', () => getPrompt('dare'));
+    choiceBtn.addEventListener('click', () => getPrompt('choice'));
+
+    nextBtn.addEventListener('click', () => {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        updateTurnDisplay();
+    });
+
+    function updateTurnDisplay() {
+        const p = players[currentPlayerIndex];
+        turnIndicator.textContent = `It's ${p.name}'s turn!`;
+        promptContent.innerHTML = "Choose Truth, Dare, or Choose Between below!";
+        choiceButtons.classList.remove('hidden');
+        nextBtn.classList.add('hidden');
+    }
+
+    function getPrompt(type) {
+        const p = players[currentPlayerIndex];
+        let pool;
+        let titleName = type.toUpperCase();
+
+        if (type === 'truth') pool = truths[p.gender];
+        else if (type === 'dare') pool = dares[p.gender];
+        else {
+            pool = choices[p.gender];
+            titleName = "CHOOSE BETWEEN";
+        }
+
+        const randomItem = pool[Math.floor(Math.random() * pool.length)];
+
+        promptContent.innerHTML = `<strong>${p.name} (${titleName}):</strong><br><br>${randomItem}`;
+        choiceButtons.classList.add('hidden');
+        nextBtn.classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>
