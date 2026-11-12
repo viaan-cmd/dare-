@@ -1,282 +1,324 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truth, Dare & Choices</title>
+    <title>Neon Truth or Dare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            padding: 24px;
-            box-sizing: border-box;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 1.6rem;
-            color: #818cf8;
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-
-        .screen {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .btn {
-            background-color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
             color: white;
-            border: none;
-            padding: 14px 20px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            width: 100%;
+            overflow-x: hidden;
         }
 
-        .btn:hover { background-color: var(--accent-hover); }
-        .btn:active { transform: scale(0.98); }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+        h1, h2, .neon-text {
+            font-family: 'Righteous', cursive;
         }
 
-        .btn-truth { background-color: #0284c7; }
-        .btn-truth:hover { background-color: #0369a1; }
-        .btn-dare { background-color: #db2777; }
-        .btn-dare:hover { background-color: #be185d; }
-        .btn-choice { background-color: #10b981; }
-        .btn-choice:hover { background-color: #059669; }
-
-        .card {
-            background-color: #0f172a;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.05);
+        /* Neon Glow Effects */
+        .neon-title {
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 80px #ff00de;
+        }
+        
+        .neon-btn-truth {
+            box-shadow: 0 0 10px #00f3ff, inset 0 0 10px #00f3ff;
+            border-color: #00f3ff;
+            text-shadow: 0 0 5px #00f3ff;
+            transition: all 0.3s ease;
+        }
+        .neon-btn-truth:hover {
+            box-shadow: 0 0 20px #00f3ff, inset 0 0 20px #00f3ff;
+            background-color: rgba(0, 243, 255, 0.2);
         }
 
-        .current-player {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #38bdf8;
-            margin-bottom: 6px;
+        .neon-btn-dare {
+            box-shadow: 0 0 10px #ff0055, inset 0 0 10px #ff0055;
+            border-color: #ff0055;
+            text-shadow: 0 0 5px #ff0055;
+            transition: all 0.3s ease;
+        }
+        .neon-btn-dare:hover {
+            box-shadow: 0 0 20px #ff0055, inset 0 0 20px #ff0055;
+            background-color: rgba(255, 0, 85, 0.2);
         }
 
-        .prompt-text {
-            font-size: 1.05rem;
-            line-height: 1.4;
-            color: #f1f5f9;
+        .neon-btn-next {
+            box-shadow: 0 0 10px #b500ff, inset 0 0 10px #b500ff;
+            border-color: #b500ff;
+            text-shadow: 0 0 5px #b500ff;
+            transition: all 0.3s ease;
+        }
+        .neon-btn-next:hover {
+            box-shadow: 0 0 20px #b500ff, inset 0 0 20px #b500ff;
+            background-color: rgba(181, 0, 255, 0.2);
         }
 
-        .player-chips {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
+        .card-glow {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .chip {
-            background: #334155;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        .pop-in {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Particles Background */
+        .bg-particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0b0f19 100%);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
+    
+    <div class="bg-particles"></div>
 
-<div class="container">
-    <h1>Truth, Dare & Choices</h1>
-    <div class="subtitle">Sitting / Couch Edition</div>
+    <div class="w-full max-w-lg mx-auto flex flex-col items-center">
+        <!-- Title -->
+        <h1 class="text-5xl sm:text-6xl text-white neon-title mb-10 text-center tracking-wider pop-in">TRUTH OR DARE</h1>
 
-    <!-- SETUP SCREEN -->
-    <div id="setupScreen" class="screen">
-        <p style="color: var(--text-muted); margin:0;">Players locked in:</p>
-        <div class="player-chips">
-            <span class="chip">Viaan</span>
-            <span class="chip">Sarrah</span>
-            <span class="chip">Mohammad</span>
-            <span class="chip">Nikki</span>
+        <!-- Main Game Area -->
+        <div id="gameArea" class="w-full bg-white/5 border border-white/10 rounded-3xl p-8 flex flex-col items-center text-center card-glow pop-in" style="animation-delay: 0.2s;">
+            
+            <!-- Turn Indicator -->
+            <div id="turnIndicator" class="mb-8">
+                <p class="text-gray-400 text-sm uppercase tracking-[0.2em] font-semibold mb-2">Current Player</p>
+                <h2 id="playerName" class="text-4xl text-white neon-text uppercase tracking-wide">Ready?</h2>
+            </div>
+
+            <!-- Action Selection -->
+            <div id="actionSelection" class="flex flex-col sm:flex-row gap-6 w-full justify-center mt-4">
+                <button onclick="choose('truth')" class="flex-1 border-2 bg-transparent text-[#00f3ff] rounded-xl py-4 px-6 text-2xl font-bold uppercase tracking-widest neon-btn-truth">
+                    Truth
+                </button>
+                <button onclick="choose('dare')" class="flex-1 border-2 bg-transparent text-[#ff0055] rounded-xl py-4 px-6 text-2xl font-bold uppercase tracking-widest neon-btn-dare">
+                    Dare
+                </button>
+            </div>
+
+            <!-- Prompt Display -->
+            <div id="promptDisplay" class="hidden flex-col items-center w-full mt-4">
+                <span id="promptType" class="text-sm uppercase tracking-[0.2em] font-bold mb-4"></span>
+                <p id="promptText" class="text-2xl sm:text-3xl font-medium leading-tight text-white mb-10 min-h-[100px] flex items-center justify-center"></p>
+                
+                <button onclick="nextTurn()" class="border-2 bg-transparent text-[#b500ff] rounded-xl py-3 px-8 text-xl font-bold uppercase tracking-wider neon-btn-next w-full sm:w-auto">
+                    Next Turn
+                </button>
+            </div>
+            
         </div>
-        <button id="startBtn" class="btn">Start Game</button>
     </div>
 
-    <!-- GAME SCREEN -->
-    <div id="gameScreen" class="screen hidden">
-        <div id="turnIndicator" class="current-player">It's Viaan's turn!</div>
+    <!-- JavaScript Logic -->
+    <script>
+        // Define Players
+        const players = [
+            { name: "Viaan", gender: "m" },
+            { name: "Mohammad", gender: "m" },
+            { name: "Sarrah", gender: "f" },
+            { name: "Nikki", gender: "f" }
+        ];
+
+        let currentPlayerIndex = -1; // -1 means game hasn't started
         
-        <div class="card">
-            <div id="promptContent" class="prompt-text">Choose Truth, Dare, or Choose Between below!</div>
-        </div>
+        // Generator Arrays for Truths (10x10x10 = 1000 unique combinations)
+        const truthP1 = [
+            "What is your honest opinion on",
+            "Tell us your most embarrassing story about",
+            "When was the last time you cried over",
+            "Have you ever lied to someone about",
+            "What is your weirdest habit involving",
+            "Share a secret you have regarding",
+            "What is the worst advice you've given about",
+            "Have you ever had a weird dream about",
+            "What is your biggest fear related to",
+            "Who in this room is the worst at"
+        ];
+        
+        const truthP2 = [
+            "romantic relationships",
+            "using social media",
+            "eating strange food combinations",
+            "singing in the shower",
+            "talking to yourself",
+            "binge-watching TV shows",
+            "getting lost in public",
+            "texting the wrong person",
+            "failing a simple task",
+            "pretending to be busy"
+        ];
+        
+        const truthP3 = [
+            "and how do you feel about it now?",
+            "when no one else is around?",
+            "in front of your family?",
+            "just to impress a crush?",
+            "and would you ever do it again?",
+            "without anyone finding out?",
+            "in the last 24 hours?",
+            "and why is it a secret?",
+            "while you were supposed to be working/studying?",
+            "and who was involved?"
+        ];
 
-        <div id="choiceButtons" class="btn-group">
-            <button id="truthBtn" class="btn btn-truth">Truth</button>
-            <button id="dareBtn" class="btn btn-dare">Dare</button>
-            <button id="choiceBtn" class="btn btn-choice">Choice</button>
-        </div>
+        // Generator Arrays for Dares (10x10x10 = 1000 unique combinations)
+        const dareP1 = [
+            "Act out the life of",
+            "Give a passionate 30-second speech about",
+            "Mime the struggle of",
+            "Sing a made-up song about",
+            "Do an interpretive dance representing",
+            "Whisper a dramatic monologue about",
+            "Draw (in the air with your finger) the shape of",
+            "Pretend you are explaining",
+            "Make facial expressions showing the emotion of",
+            "Tell a bedtime story about"
+        ];
+        
+        const dareP2 = [
+            "a confused time traveler",
+            "a squirrel losing its nut",
+            "an alien trying human food",
+            "a robot that is running out of battery",
+            "a dramatic reality TV star",
+            "a melting snowman",
+            "someone walking on ice in high heels",
+            "a superhero with a useless power",
+            "a cat trying to catch a laser pointer",
+            "a frantic chef in a busy kitchen"
+        ];
+        
+        const dareP3 = [
+            "while balancing on one foot.",
+            "without blinking or breaking eye contact.",
+            "using a terrible fake accent.",
+            "while pretending the floor is lava.",
+            "in slow motion.",
+            "while completely ignoring the person to your left.",
+            "with your eyes tightly closed.",
+            "and end it by bowing like royalty.",
+            "while laughing like an evil villain between words.",
+            "using only your non-dominant hand for gestures."
+        ];
 
-        <button id="nextBtn" class="btn hidden" style="background-color: #334155;">Next Player</button>
-    </div>
-</div>
+        // Track used prompts to guarantee NO REPEATS
+        const usedPrompts = new Set();
+        let specialKissTriggered = false;
 
-<script>
-    const players = [
-        { name: "Viaan", gender: "male" },
-        { name: "Mohammad", gender: "male" },
-        { name: "Sarrah", gender: "female" },
-        { name: "Nikki", gender: "female" }
-    ];
+        // UI Elements
+        const playerNameEl = document.getElementById('playerName');
+        const actionSelectionEl = document.getElementById('actionSelection');
+        const promptDisplayEl = document.getElementById('promptDisplay');
+        const promptTypeEl = document.getElementById('promptType');
+        const promptTextEl = document.getElementById('promptText');
 
-    let currentPlayerIndex = 0;
+        // Start Game loop automatically on load
+        window.onload = () => {
+            nextTurn();
+        };
 
-    const truths = {
-        male: [
-            "Who in this room would you trust the most to hide your phone if it had embarrassing things on it?",
-            "What is the funniest text you've accidentally sent to the wrong person while sitting at home?",
-            "If you had to swap styles with someone in this room for a week, who would it be?",
-            "What is a silly secret talent you can perform right now while sitting down?"
-        ],
-        female: [
-            "Who in this room do you think takes the longest to get ready when going out?",
-            "What is the weirdest snack combination you actually enjoy eating while gaming or chilling?",
-            "If you could instantly teleport anywhere in the world right now without leaving your seat, where would you go?",
-            "What's a minor habit you have that you think nobody else notices?"
-        ]
-    };
+        function nextTurn() {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            const currentPlayer = players[currentPlayerIndex];
 
-    const dares = {
-        male: [
-            "Send a random emoji to the last person you messaged on your phone without explaining why.",
-            "Do your best dramatic movie villain monologue for 15 seconds while remaining completely seated.",
-            "Let the person to your right look through your photo gallery for 30 seconds.",
-            "Speak like a robot for the next 2 full rounds while answering questions."
-        ],
-        female: [
-            "Speak in a dramatic British accent for the next 2 full rounds.",
-            "Act out your reaction if your phone suddenly flew across the room right now.",
-            "Send a voice note to a random friend saying 'The penguins are migrating early this year' and play it out loud.",
-            "Let the person to your left change your phone wallpaper to something funny for 10 minutes."
-        ]
-    };
+            // Update UI
+            playerNameEl.innerText = currentPlayer.name;
+            playerNameEl.classList.remove('pop-in');
+            void playerNameEl.offsetWidth; // Trigger reflow to restart animation
+            playerNameEl.classList.add('pop-in');
 
-    const choices = {
-        male: [
-            "**Would You Rather:** Between Sarrah and Nikki, who would you rather kiss? (Pick one boldly!)",
-            "**Would You Rather:** Between Sarrah and Nikki, who would you trust to survive a zombie apocalypse locked in a room together?",
-            "**Would You Rather:** Between Sarrah and Nikki, who has the better taste in music or games?"
-        ],
-        female: [
-            "**Would You Rather:** Between Viaan and Mohammad, who would you rather kiss? (No backing out, pick one!)",
-            "**Would You Rather:** Between Viaan and Mohammad, who do you think would panic first if the Wi-Fi cut out?",
-            "**Would You Rather:** Between Viaan and Mohammad, who would you pick as your co-driver on a cross-country road trip?"
-        ]
-    };
+            // Show Truth/Dare buttons, hide Prompt
+            actionSelectionEl.classList.remove('hidden');
+            actionSelectionEl.classList.add('flex');
+            
+            promptDisplayEl.classList.add('hidden');
+            promptDisplayEl.classList.remove('flex');
+        }
+        
+        function generatePrompt(type) {
+            // 20% chance to trigger the specific gender-based kiss requirement until it is used once
+            if (type === 'truth' && !specialKissTriggered && Math.random() < 0.2) {
+                specialKissTriggered = true;
+                return "Who would you kiss, [KISS_CHOICE]?";
+            }
 
-    // DOM Elements
-    const setupScreen = document.getElementById('setupScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const startBtn = document.getElementById('startBtn');
-    const turnIndicator = document.getElementById('turnIndicator');
-    const promptContent = document.getElementById('promptContent');
-    const choiceButtons = document.getElementById('choiceButtons');
-    const truthBtn = document.getElementById('truthBtn');
-    const dareBtn = document.getElementById('dareBtn');
-    const choiceBtn = document.getElementById('choiceBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    // Event Listeners (Guaranteed to bind properly)
-    startBtn.addEventListener('click', () => {
-        setupScreen.classList.add('hidden');
-        gameScreen.classList.remove('hidden');
-        updateTurnDisplay();
-    });
-
-    truthBtn.addEventListener('click', () => getPrompt('truth'));
-    dareBtn.addEventListener('click', () => getPrompt('dare'));
-    choiceBtn.addEventListener('click', () => getPrompt('choice'));
-
-    nextBtn.addEventListener('click', () => {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        updateTurnDisplay();
-    });
-
-    function updateTurnDisplay() {
-        const p = players[currentPlayerIndex];
-        turnIndicator.textContent = `It's ${p.name}'s turn!`;
-        promptContent.innerHTML = "Choose Truth, Dare, or Choose Between below!";
-        choiceButtons.classList.remove('hidden');
-        nextBtn.classList.add('hidden');
-    }
-
-    function getPrompt(type) {
-        const p = players[currentPlayerIndex];
-        let pool;
-        let titleName = type.toUpperCase();
-
-        if (type === 'truth') pool = truths[p.gender];
-        else if (type === 'dare') pool = dares[p.gender];
-        else {
-            pool = choices[p.gender];
-            titleName = "CHOOSE BETWEEN";
+            // Generate combinatorial prompt based on type
+            let p1 = type === 'truth' ? truthP1 : dareP1;
+            let p2 = type === 'truth' ? truthP2 : dareP2;
+            let p3 = type === 'truth' ? truthP3 : dareP3;
+            
+            let part1 = p1[Math.floor(Math.random() * p1.length)];
+            let part2 = p2[Math.floor(Math.random() * p2.length)];
+            let part3 = p3[Math.floor(Math.random() * p3.length)];
+            
+            return `${part1} ${part2} ${part3}`;
         }
 
-        const randomItem = pool[Math.floor(Math.random() * pool.length)];
+        function choose(type) {
+            const currentPlayer = players[currentPlayerIndex];
+            
+            let selectedPrompt = "";
+            let attempts = 0;
+            const maxAttempts = 200; // Safeguard against infinite loops
 
-        promptContent.innerHTML = `<strong>${p.name} (${titleName}):</strong><br><br>${randomItem}`;
-        choiceButtons.classList.add('hidden');
-        nextBtn.classList.remove('hidden');
-    }
-</script>
+            // Generate unique prompt, keep retrying if it's already in the usedPrompts Set
+            do {
+                selectedPrompt = generatePrompt(type);
+                attempts++;
+            } while (usedPrompts.has(selectedPrompt) && attempts < maxAttempts);
 
+            // Add to Set to prevent repeats for the remainder of the session
+            usedPrompts.add(selectedPrompt);
+
+            // Process dynamic placeholders (Gender specific constraint)
+            if (selectedPrompt.includes('[KISS_CHOICE]')) {
+                if (currentPlayer.gender === 'm') {
+                    selectedPrompt = selectedPrompt.replace('[KISS_CHOICE]', 'Sarrah or Nikki');
+                } else {
+                    selectedPrompt = selectedPrompt.replace('[KISS_CHOICE]', 'Viaan or Mohammad');
+                }
+            }
+
+            // Hide Action Buttons
+            actionSelectionEl.classList.add('hidden');
+            actionSelectionEl.classList.remove('flex');
+
+            // Show Prompt Display
+            promptDisplayEl.classList.remove('hidden');
+            promptDisplayEl.classList.add('flex', 'fade-in');
+
+            // Set Prompt Text and Type
+            if (type === 'truth') {
+                promptTypeEl.innerText = "Truth";
+                promptTypeEl.className = "text-sm uppercase tracking-[0.2em] font-bold mb-4 text-[#00f3ff]";
+            } else {
+                promptTypeEl.innerText = "Dare";
+                promptTypeEl.className = "text-sm uppercase tracking-[0.2em] font-bold mb-4 text-[#ff0055]";
+            }
+            
+            promptTextEl.innerText = `"${selectedPrompt}"`;
+        }
+    </script>
 </body>
 </html>
+```
